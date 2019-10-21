@@ -3,6 +3,8 @@
 Find loads and verifies your enviroment variables wherever they are! (.env files for example)
 
 
+https://www.npmjs.com/package/mandatoryenv
+
 
 ·Disclaimer: This module uses dotenv in the background, adding only extra checking for the variables it loads.
 
