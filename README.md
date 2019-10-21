@@ -15,6 +15,9 @@ DB_USER=mySecureDbUser
 DB_PASSWORD=123
 PORT=3000
 
+````
+
+````javascript
 // *** src/index.js  <<< You only need to require mandatory env HERE
 require('mandatoryenv').load([
     'DB_USER',
@@ -29,11 +32,17 @@ require('mandatoryenv').load([
 
 console.log(process.env);
 
+````
+
+````javascript
 // *** src/server.js < It's not necessary to require it again as we already did on index.js so we just use values directly
 const { PORT } = process.env; // or const PORT = process.env.PORT;
 
 app.listen(PORT, () => console.log(`Serverl listening on port ${PORT}`));
 
+````
+
+````javascript
 // *** src/model/database.js
 const { DB_USER, DB_PASSWORD } = process.env;
 
