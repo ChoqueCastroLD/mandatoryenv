@@ -12,7 +12,7 @@ module.exports = {
 
         // Check if all needed enviroment variables are available
         variables.forEach(variable => {
-            if ( !(silent && Reflect.has(process.env, variable)) ){
+            if ( !silent && !Reflect.has(process.env, variable) ){
                 throw new Error(`❌   _No ${variable} found in Enviroment Variables`);
             }
         });
