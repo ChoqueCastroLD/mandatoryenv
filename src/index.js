@@ -22,7 +22,7 @@ module.exports = {
         });
 
 
-        console.info("✅   _All enviroment variables were loaded with no errors");
+        // console.info("✅   _All enviroment variables were loaded with no errors");
         return process.env;
     }
 }
