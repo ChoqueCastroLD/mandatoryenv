@@ -12,17 +12,11 @@ module.exports = {
 
         // Check if all needed enviroment variables are available
         variables.forEach(variable => {
-            if (silent) {
-                if (!Reflect.has(process.env, variable))
-                    console.error(`⚠️   _No ${variable} found in Enviroment Variables`);
-            } else {
-                if (!Reflect.has(process.env, variable))
-                    throw new Error(`❌   _No ${variable} found in Enviroment Variables`);
+            if ( !(silent && Reflect.has(process.env, variable)) ){
+                throw new Error(`❌   _No ${variable} found in Enviroment Variables`);
             }
         });
 
-
-        // console.info("✅   _All enviroment variables were loaded with no errors");
         return process.env;
     }
 }
