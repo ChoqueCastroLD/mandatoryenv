@@ -16,7 +16,8 @@ module.exports = {
                 throw new Error(`❌   _No ${variable} found in Enviroment Variables`);
             }
         });
-
+    
+        global.env = process.env;
         return process.env;
     }
 }
