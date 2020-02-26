@@ -11,33 +11,59 @@ https://www.npmjs.com/package/mandatoryenv
 Example usage:
 ````javascript
 // *** .env < Be careful with spacing
-DB_USER=mySecureDbUser
-DB_PASSWORD=123
 PORT=3000
+DB_USER=mySecureDbUser
+````
+
+You only need to require mandatoryenv once in top of your main file
+
+````javascript
+// *** src/index.js  <<< 
+
+// Mandatory variables
+
+require('mandatoryenv')
+.load(['DB_USER', 'DB_PASSWORD', 'PORT']);
+// > Throws Error Missing Enviroment Variable DB_PASSWORD
+
+require('mandatoryenv')
+.load(['DB_USER', 'PORT']);
+// process.env > {'DB_USER': 'mySecureDbUser', 'PORT': '3000'}
+// env > {'DB_USER': 'mySecureDbUser', 'PORT': '3000'}
 
 ````
 
 ````javascript
-// *** src/index.js  <<< You only need to require mandatoryenv once
-require('mandatoryenv').load([
-    'DB_USER',
-    'DB_PASSWORD',
-    'PORT']);
+// *** src/index.js  <<< 
 
-console.log(process.env); // {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'PORT': '3000'}
-console.log(env); // {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'PORT': '3000'}
+// Optional variables
+
+require('mandatoryenv')
+.load({'DB_USER': 'test', 'DB_PASSWORD': '123', 'PORT': 4444});
+// process.env > {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'PORT': '3000'}
+// env > {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'PORT': '3000'}
+
+// You can put class Error as value if you dont want to use a default value
+
+require('mandatoryenv')
+.load({'DB_USER': 'test', 'DB_PASSWORD': Error, 'DB_DATABASE': Error, 'PORT': Error});
+// > Throws Error Missing Enviroment Variable DB_PASSWORD, DB_DATABASE
+
+require('mandatoryenv')
+.load({'DB_USER': 'test', 'DB_PASSWORD': '123', 'DB_DATABASE': Error, 'PORT': Error});
+// > Throws Error Missing Enviroment Variable DB_DATABASE
+
+require('mandatoryenv')
+.load({'DB_USER': 'test', 'DB_PASSWORD': '123', 'DB_DATABASE': 'testdb', 'PORT': Error});
+// process.env > {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'DB_DATABASE': 'testdb', 'PORT': '3000'}
+// env > {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'DB_DATABASE': 'testdb', 'PORT': '3000'}
 ````
 
 ````javascript
-// *** src/server.js < It's not necessary to require it again as we already did on index.js so we just use values directly
+// *** src/server.js 
+require('mandatoryenv').load({'PORT': 3000});
+
 app.listen(env.PORT, () => console.log(`Serverl listening on port ${env.PORT}`));
-
-````
-
-````javascript
-// *** src/model/database.js
-mysql.createConnection({
-    user: env.DB_USER,
-    password: env.DB_PASSWORD
-})
+// or
+app.listen(process.env.PORT, () => console.log(`Serverl listening on port ${process.env.PORT}`));
 ````
