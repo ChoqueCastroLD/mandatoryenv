@@ -57,7 +57,20 @@ function envValidation(_env, _load) {
 }
 
 module.exports = {
-    load(enviroments = {
+    load(variables = [] || {}) {
+        let _env = loadEnvByName('.env');
+        
+        const finalEnv = {
+            ...envValidation(_env, variables),
+            ...process.env
+        }
+        
+        process.env = finalEnv;
+        global.env = finalEnv;
+        
+        return finalEnv;
+    },
+    loadConfig(enviroments = {
         global: {
             load_if: () => true,
             load_from: '.env',

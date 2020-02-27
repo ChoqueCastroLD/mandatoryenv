@@ -17,7 +17,7 @@ You only need to require mandatoryenv once in top of your main file then you can
 ````javascript
 // *** src/index.js <<< 
 
-// Load variables from .env
+// Load All variables from .env
 require('mandatoryenv').load();
 
 env.PORT
@@ -52,7 +52,7 @@ module.exports = {
 
 ````javascript
 // *** index.js
-require('mandatoryenv').load(require('./env.config.js'));
+require('mandatoryenv').loadConfig(require('./env.config.js'));
 
 env.PORT
 // > 3000
@@ -100,7 +100,7 @@ module.exports = {
 
 ````javascript
 // *** index.js
-require('mandatoryenv').load(require('./env.config.js'));
+require('mandatoryenv').loadConfig(require('./env.config.js'));
 
 env.PORT
 // > 3000
