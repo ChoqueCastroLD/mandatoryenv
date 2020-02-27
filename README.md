@@ -1,69 +1,111 @@
-## Mandatory Env
+# Mandatory Env
 
-Find loads and verifies your enviroment variables wherever they are! (.env files for example)
-
+Find, loads and verifies your enviroment variables wherever they are! (.env files for example)
 
 https://www.npmjs.com/package/mandatoryenv
 
+## Basic Usage Example:
 
-·Disclaimer: This module uses dotenv in the background, adding only extra checking for the variables it loads.
-
-Example usage:
 ````javascript
-// *** .env < Be careful with spacing
+// *** .env <<< Be careful with spacing
 PORT=3000
 DB_USER=mySecureDbUser
 ````
 
-You only need to require mandatoryenv once in top of your main file
+You only need to require mandatoryenv once in top of your main file then you can access global variable env anywhere in your code
 
 ````javascript
-// *** src/index.js  <<< 
+// *** src/index.js <<< 
 
-// Mandatory variables
+// Load variables from .env
+require('mandatoryenv').load();
 
-require('mandatoryenv')
-.load(['DB_USER', 'DB_PASSWORD', 'PORT']);
-// > Throws Error Missing Enviroment Variable DB_PASSWORD
+env.PORT
+// > 3000
+env.DB_USER
+// > mySecureDbUser
+````
 
-require('mandatoryenv')
-.load(['DB_USER', 'PORT']);
-// process.env > {'DB_USER': 'mySecureDbUser', 'PORT': '3000'}
-// env > {'DB_USER': 'mySecureDbUser', 'PORT': '3000'}
+## Advanced Usage Example (Using env.config.js):
 
+````javascript
+// *** .env <<< Be careful with spacing
+PORT=3000
+DB_USER=mySecureDbUser
+DB_PASSWORD=123456
 ````
 
 ````javascript
-// *** src/index.js  <<< 
-
-// Optional variables
-
-require('mandatoryenv')
-.load({'DB_USER': 'test', 'DB_PASSWORD': '123', 'PORT': 4444});
-// process.env > {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'PORT': '3000'}
-// env > {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'PORT': '3000'}
-
-// You can put class Error as value if you dont want to use a default value
-
-require('mandatoryenv')
-.load({'DB_USER': 'test', 'DB_PASSWORD': Error, 'DB_DATABASE': Error, 'PORT': Error});
-// > Throws Error Missing Enviroment Variable DB_PASSWORD, DB_DATABASE
-
-require('mandatoryenv')
-.load({'DB_USER': 'test', 'DB_PASSWORD': '123', 'DB_DATABASE': Error, 'PORT': Error});
-// > Throws Error Missing Enviroment Variable DB_DATABASE
-
-require('mandatoryenv')
-.load({'DB_USER': 'test', 'DB_PASSWORD': '123', 'DB_DATABASE': 'testdb', 'PORT': Error});
-// process.env > {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'DB_DATABASE': 'testdb', 'PORT': '3000'}
-// env > {'DB_USER': 'mySecureDbUser', 'DB_PASSWORD': '123', 'DB_DATABASE': 'testdb', 'PORT': '3000'}
+// *** env.config.js
+module.exports = {
+    global: {
+        load_if: () => true, // Always use this enviroment config
+        load_from: '.env',
+        load: {
+            'PORT': 3000,
+            'DB_USER': 'root',
+            'DB_PASSWORD': Error, // If not set an error will be thrown
+        },
+    }
+}
 ````
 
 ````javascript
-// *** src/server.js 
-require('mandatoryenv').load({'PORT': 3000});
+// *** index.js
+require('mandatoryenv').load(require('./env.config.js'));
 
-app.listen(env.PORT, () => console.log(`Serverl listening on port ${env.PORT}`));
-// or
-app.listen(process.env.PORT, () => console.log(`Serverl listening on port ${process.env.PORT}`));
+env.PORT
+// > 3000
+env.DB_USER
+// > mySecureDbUser
+env.DB_PASSWORD
+// > 123456
+````
+
+## More Advanced Usage Example (Using env.config.js):
+
+````javascript
+// *** .env <<< Be careful with spacing
+PORT=3000
+DB_USER=mySecureDbUser
+DB_PASSWORD=123456
+````
+
+````javascript
+// *** env.config.js
+module.exports = {
+    database: {
+        load: [
+            'DB_USER',
+            'DB_PASSWORD'
+        ]
+    },
+    developmentEnviroment: {
+        load_if: (env) => env.NODE_ENV.toUpperCase() == 'DEVELOPMENT', // Load if dev env
+        load_includes: ['database']
+        load_from: '.env.dev',
+        load: {
+            'PORT': 3000 // If not set default value will be 3000
+        },
+    },
+    productionEnviroment: {
+        load_if: (env) => env.NODE_ENV.toUpperCase() == 'PRODUCTION', // Load if prod env
+        load_from: '.env',
+        load: {
+            'PORT': Error // If not set an error will be thrown
+        },
+    }
+}
+````
+
+````javascript
+// *** index.js
+require('mandatoryenv').load(require('./env.config.js'));
+
+env.PORT
+// > 3000
+env.DB_USER
+// > mySecureDbUser
+env.DB_PASSWORD
+// > 123456
 ````

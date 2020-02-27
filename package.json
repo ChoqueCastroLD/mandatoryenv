@@ -1,7 +1,7 @@
 {
   "name": "mandatoryenv",
-  "version": "2.0.1",
-  "description": "Load all your enviroment variables to proccess.env and checks that they have a value",
+  "version": "3.0.0",
+  "description": "Load all your enviroment variables to env",
   "main": "src/index.js",
   "repository": {
     "url": "https://github.com/ChoqueCastroLD/mandatoryenv"
@@ -14,7 +14,5 @@
   ],
   "author": "ChoqueCastroLD",
   "license": "GNU V3",
-  "dependencies": {
-    "dotenv": "^8.2.0"
-  }
+  "dependencies": {}
 }
