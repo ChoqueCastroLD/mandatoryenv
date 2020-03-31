@@ -3,7 +3,8 @@ const path = require('path');
 
 function parseEnv(content) {
     let temp = {};
-    const env = content.split('\n')
+    const env = (content+'').split('\n')
+                        .map(v => v.trim())
                         .filter(v => !v.startsWith('#'))
                         .filter(v => !v.startsWith('//'));
     for (const line of env) {
