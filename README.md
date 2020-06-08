@@ -20,6 +20,17 @@ You only need to require mandatoryenv once in top of your main file then you can
 // Load All variables from .env
 require('mandatoryenv').load();
 
+process.env.PORT
+// > 3000
+process.env.DB_USER
+// > mySecureDbUser
+
+// *** src/index.js <<< 
+
+// Load all variables from .env and assign them to global env variable
+require('mandatoryenv').load(['PORT', 'DB_USER'], {defineGlobal: true});
+// Variables in array are mandatory (an error will be thrown if not found)
+
 env.PORT
 // > 3000
 env.DB_USER
@@ -52,7 +63,7 @@ module.exports = {
 
 ````javascript
 // *** index.js
-require('mandatoryenv').loadConfig(require('./env.config.js'));
+require('mandatoryenv').loadConfig(require('./env.config.js'), {defineGlobal: true});
 
 env.PORT
 // > 3000

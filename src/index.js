@@ -58,16 +58,21 @@ function envValidation(_env, _load) {
 }
 
 module.exports = {
-    load(variables = [] || {}) {
-        let _env = loadEnvByName('.env');
+    load(variables = [] || {}, options = {envfile: '.env', defineGlobal: false, loadToEnv: true}) {
+        let _env = loadEnvByName(options.file || '.env');
         
         const finalEnv = {
             ...envValidation(_env, variables),
             ...process.env
         }
         
-        process.env = finalEnv;
-        global.env = finalEnv;
+        if(options.loadToEnv !== false) {
+            process.env = finalEnv;
+        }
+
+        if(options.defineGlobal === true) {
+            global.env = finalEnv;
+        }
         
         return finalEnv;
     },
@@ -79,7 +84,9 @@ module.exports = {
         }
     }, config = {
         load_only: null || '',
-        load_from: null || ''
+        load_from: null || '',
+        defineGlobal: false,
+        loadToEnv: true
     }) {
         for (const enviroment in enviroments) {
             if (config.load_only || config.load_from) {
@@ -99,8 +106,15 @@ module.exports = {
                         ...envValidation(_env, enviroments[enviroment].load),
                         ...process.env
                     }
-                    process.env = finalEnv;
-                    global.env = finalEnv;
+                                
+                    if(options.loadToEnv !== false) {
+                        process.env = finalEnv;
+                    }
+
+                    if(options.defineGlobal === true) {
+                        global.env = finalEnv;
+                    }
+                    
                     return finalEnv;
                 }
             }
@@ -143,9 +157,14 @@ module.exports = {
                             ..._env,
                             ...process.env,
                         }
-
-                        process.env = finalEnv;
-                        global.env = finalEnv;
+   
+                        if(options.loadToEnv !== false) {
+                            process.env = finalEnv;
+                        }
+    
+                        if(options.defineGlobal === true) {
+                            global.env = finalEnv;
+                        }
 
                         return finalEnv;
                     }
@@ -153,8 +172,9 @@ module.exports = {
 
             }
         }
-
-        global.env = process.env;
+        if(options.defineGlobal === true) {
+            global.env = process.env;
+        }
         return process.env;
     }
 }
