@@ -107,11 +107,11 @@ module.exports = {
                         ...process.env
                     }
                                 
-                    if(options.loadToEnv !== false) {
+                    if(config.loadToEnv !== false) {
                         process.env = finalEnv;
                     }
 
-                    if(options.defineGlobal === true) {
+                    if(config.defineGlobal === true) {
                         global.env = finalEnv;
                     }
                     
@@ -158,11 +158,11 @@ module.exports = {
                             ...process.env,
                         }
    
-                        if(options.loadToEnv !== false) {
+                        if(config.loadToEnv !== false) {
                             process.env = finalEnv;
                         }
     
-                        if(options.defineGlobal === true) {
+                        if(config.defineGlobal === true) {
                             global.env = finalEnv;
                         }
 
@@ -172,7 +172,7 @@ module.exports = {
 
             }
         }
-        if(options.defineGlobal === true) {
+        if(config.defineGlobal === true) {
             global.env = process.env;
         }
         return process.env;
