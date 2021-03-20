@@ -14,5 +14,7 @@
   ],
   "author": "ChoqueCastroLD",
   "license": "GNU V3",
-  "dependencies": {}
+  "dependencies": {
+    "dotenv-expand": "^5.1.0"
+  }
 }

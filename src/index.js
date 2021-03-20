@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const dotenvExpand = require('dotenv-expand');
 
 function parseEnv(content) {
     let temp = {};
@@ -58,23 +59,29 @@ function envValidation(_env, _load) {
 }
 
 module.exports = {
-    load(variables = [] || {}, options = {envfile: '.env', defineGlobal: false, loadToEnv: true}) {
+    load(variables = [] || {}, options = {envfile: '.env', defineGlobal: false, loadToEnv: true, expand: true}) {
         let _env = loadEnvByName(options.file || '.env');
         
-        const finalEnv = {
-            ...envValidation(_env, variables),
-            ...process.env
+        let finalEnv = envValidation(_env, variables);
+        
+        for (const key in finalEnv) {
+            if(key === '' || !finalEnv[key])
+                delete finalEnv[key];
+        }
+
+        if(options.expand !== false) {
+            finalEnv = dotenvExpand({error: null, parsed: finalEnv});
         }
         
         if(options.loadToEnv !== false) {
-            process.env = finalEnv;
-        }
-
-        if(options.defineGlobal === true) {
-            global.env = finalEnv;
+            process.env = {...finalEnv, ...process.env};
         }
         
-        return finalEnv;
+        if(options.defineGlobal === true) {
+            global.env = process.env;
+        }
+        
+        return process.env;
     },
     loadConfig(enviroments = {
         global: {
@@ -102,17 +109,19 @@ module.exports = {
                         let errMessage = `  ❌   Enviroment ${enviroment} must have a load property \n`;
                         throw errMessage;
                     }
-                    const finalEnv = {
-                        ...envValidation(_env, enviroments[enviroment].load),
-                        ...process.env
+                    const finalEnv = envValidation(_env, enviroments[enviroment].load);
+
+                    for (const key in finalEnv) {
+                        if(key === '' || !finalEnv[key])
+                            delete finalEnv[key];
                     }
-                                
+
                     if(options.loadToEnv !== false) {
-                        process.env = finalEnv;
+                        process.env = {...finalEnv, ...process.env};
                     }
 
                     if(options.defineGlobal === true) {
-                        global.env = finalEnv;
+                        global.env = process.env;
                     }
                     
                     return finalEnv;
@@ -152,18 +161,13 @@ module.exports = {
                             ..._env,
                             ...envValidation(_env, curenv.load)
                         }
-
-                        const finalEnv = {
-                            ..._env,
-                            ...process.env,
-                        }
    
                         if(options.loadToEnv !== false) {
-                            process.env = finalEnv;
+                            process.env = {..._env, ...process.env};
                         }
     
                         if(options.defineGlobal === true) {
-                            global.env = finalEnv;
+                            global.env = process.env;
                         }
 
                         return finalEnv;
